@@ -24,14 +24,14 @@
     };
   };
   outputs =
-    {
-      self,
-      nixpkgs,
-      home-manager,
-      astronvim,
-      system-manager,
-      nixGL,
-      stylix,
+    { self
+    , nixpkgs
+    , home-manager
+    , astronvim
+    , system-manager
+    , nixGL
+    , stylix
+    ,
     }@inputs:
     let
       supportedSystems = [
@@ -58,13 +58,25 @@
           };
           modules = [
             stylix.homeManagerModules.stylix
-            ./abanna/default.nix
+            ./abanna
           ];
         };
       };
 
-      systemConfiguration = {
-      
-      };
+      systemConfigs.default =
+      let
+        pkgs = import nixpkgs {
+            system = "x86_64-linux";
+            config.allowUnfree = true;
+        };
+      in system-manager.lib.makeSystemConfig {
+          # nix run 'github:numtide/system-manager' -- switch flake '.'
+            modules = [
+              ./system-modules
+              ({
+                 config.system-manager.allowAnyDistro = true;
+              })
+            ];
+        };
     };
 }
