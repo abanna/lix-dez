@@ -22,6 +22,9 @@
       url = "github:AstroNvim/template";
       flake = false;
     };
+    nuspawn = {
+        url = "https://codeberg.org/tulilirockz/nuspawn/archive/main.tar.gz";
+    };
   };
   outputs =
     { self
@@ -31,7 +34,7 @@
     , system-manager
     , nixGL
     , stylix
-    ,
+    , nuspawn
     }@inputs:
     let
       supportedSystems = [
@@ -70,13 +73,14 @@
             config.allowUnfree = true;
         };
       in system-manager.lib.makeSystemConfig {
-          # nix run 'github:numtide/system-manager' -- switch flake '.'
+            # nix run 'github:numtide/system-manager' -- switch --flake
             modules = [
-              ./system-modules
-              ({
-                 config.system-manager.allowAnyDistro = true;
-              })
+                ./modules
+                ({
+                    config.system-manager.allowAnyDistro = true;
+                })
             ];
         };
     };
+
 }

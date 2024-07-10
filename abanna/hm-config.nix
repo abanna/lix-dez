@@ -18,14 +18,12 @@ let
       shopt -s nullglob # Prevent loop from running if no files
       for file in ${pkg.out}/bin/*; do
         echo "#!${pkgs.bash}/bin/bash" > "$out/bin/$(basename $file)"
-        echo "exec -a \"\$0\" ${lib.getExe inputs.nixGL.packages.${pkgs.system}.nixVulkanIntel} $file \"\$@\"" >> "$out/bin/$(basename $file)"
+        echo "exec -a \"\$0\" ${inputs.nixGL.packages.${pkgs.system}.nixVulkanIntel}/bin/nixVulkanIntel $file \"\$@\"" >> "$out/bin/$(basename $file)"
         chmod +x "$out/bin/$(basename $file)"
       done
       shopt -u nullglob # Revert nullglob back to its normal default state
     '';
   }));
-
-
 
   # Wrap a single package
   glwrap = pkg: (pkg.overrideAttrs (old: {
@@ -47,7 +45,7 @@ let
       shopt -s nullglob # Prevent loop from running if no files
       for file in ${pkg.out}/bin/*; do
         echo "#!${pkgs.bash}/bin/bash" > "$out/bin/$(basename $file)"
-        echo "exec -a \"\$0\" ${lib.getExe inputs.nixGL.packages.${pkgs.system}.nixGLDefault} $file \"\$@\"" >> "$out/bin/$(basename $file)"
+        echo "exec -a \"\$0\" ${inputs.nixGL.packages.${pkgs.system}.nixGLDefault}/bin/nixGL $file \"\$@\"" >> "$out/bin/$(basename $file)"
         chmod +x "$out/bin/$(basename $file)"
       done
       shopt -u nullglob # Revert nullglob back to its normal default state
@@ -161,7 +159,7 @@ in
 
   home.file.".p10k.zsh".text = ''
     # Powerlevel10k configuration
-    POWERLEVEL10K_MODE='nerdfont-complete' 
+    POWERLEVEL10K_MODE='nerdfont-complete'
     POWERLEVEL10K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
     POWERLEVEL10K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time history time)
   '';
@@ -234,7 +232,7 @@ in
       "--ozone-platform=wayland"
     ];
   };
-  
+
 
   home.packages =
     (wrapDeez (with pkgs; [
@@ -243,6 +241,8 @@ in
     ]))
     ++ (with pkgs; [
       # user selected packages
+      debootstrap
+      (inputs.nuspawn.packages.${pkgs.system}.nuspawn)
       (vkwrap zed-editor)
       helix
       ranger
@@ -253,9 +253,12 @@ in
       bat
       bottom
       btop
+      nushell
       cheat
       chezmoi
       distrobox
+      docker
+      podman
       eza
       fd
       fzf
@@ -264,6 +267,7 @@ in
       just
       jq
       kubectl
+      kind
       lazygit
       neofetch
       neovim
