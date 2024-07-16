@@ -3,6 +3,8 @@ version: '3'
 vars:
   DEFAULT_CONFIGURATION: studio
 
+#  sudo `which nix` run 'github:numtide/system-manager' -- switch --flake '.'
+
 tasks:
   default:
     cmds:
